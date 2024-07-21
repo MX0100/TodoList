@@ -16,6 +16,9 @@ class TaskController:
     def add_task(self, description, user_id, start_date, end_date, repeat_value):
         self.db.add_task_with_dates(description, user_id, start_date, end_date, repeat_value)
 
+    def update_task(self, task_id, new_description):
+        self.db.update_task_with_description(task_id, new_description)
+
     def get_tasks(self, user_id):
         tasks_data = self.db.get_tasks(user_id)
         tasks = [self._create_task_from_data(task) for task in tasks_data]
@@ -73,3 +76,14 @@ class TaskController:
         tasks_data = self.db.get_general_tasks(user_id)
         tasks = [self._create_task_from_data(task) for task in tasks_data]
         return tasks
+
+    def get_scheduled_tasks(self, user_id):
+        tasks_data = self.db.get_scheduled_tasks(user_id)
+        tasks = [self._create_task_from_data(task) for task in tasks_data]
+        return tasks
+
+
+    def toggle_task_completion(self, task_id, completed):
+        self.db.toggle_task_completion(task_id, completed)
+
+

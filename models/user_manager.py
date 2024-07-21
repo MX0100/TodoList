@@ -23,8 +23,6 @@ class UserManager:
         return True, "User registered successfully"
 
     def login_user(self, username, password):
-        if not username or not password:
-            return False, "Username and password cannot be empty"
         user = self.db.get_user(username, password)
         if user:
             self.current_user = {
@@ -32,7 +30,6 @@ class UserManager:
                 "username": user[1],
                 "password": user[2]  # 如果需要，可以包括密码
             }
-            print(self.current_user,id(self))  # test is verified
             return self.current_user
 
     def get_current_user_id(self):

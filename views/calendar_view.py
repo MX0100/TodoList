@@ -1,16 +1,20 @@
-import tkinter as tk
+import tkinter as _tk
+from tkinter import ttk as tk
 from tkinter import ttk, messagebox
 from tkcalendar import Calendar, DateEntry
 from datetime import datetime
 import datetime
+import re
+
 class CalendarWindow:
-    def __init__(self, root,user_controller,task_controller):
+    def __init__(self, root,user_controller,task_controller, app):
         self.root = root
         self.task_controller = task_controller
         self.user_controller = user_controller
+        self.app = app
 
     def show_calendar(self):
-        self.calendar_window = tk.Toplevel(self.root)
+        self.calendar_window = _tk.Toplevel(self.root)
         self.calendar_window.title("Calendar")
         self.calendar_window.geometry("800x600")
 
@@ -19,7 +23,7 @@ class CalendarWindow:
 
         self.calendar.bind("<<CalendarSelected>>", self.show_tasks)
 
-        self.task_listbox = tk.Listbox(self.calendar_window)
+        self.task_listbox = _tk.Listbox(self.calendar_window)
         self.task_listbox.pack(pady=10, fill="both", expand=True)
 
         add_task_btn = tk.Button(self.calendar_window, text="Add Task", command=self.open_add_task_dialog)
@@ -33,17 +37,18 @@ class CalendarWindow:
 
     def show_tasks(self, event=None):
         selected_date = self.calendar.get_date()
-        selected_date=datetime.datetime.strptime(selected_date, "%m/%d/%y").strftime("%Y-%m-%d") #转化
-        print(selected_date)
+        if not re.match(r'\d\d\d\d\W\d\d\W\d\d', selected_date):
+            selected_date=datetime.datetime.strptime(selected_date, "%m/%d/%y").strftime("%Y-%m-%d") #转化
+
         current_user_id = self.user_controller.get_current_user_id()
         tasks = self.task_controller.get_tasks_by_date(current_user_id, selected_date)
 
-        self.task_listbox.delete(0, tk.END)
+        self.task_listbox.delete(0, _tk.END)
         for task in tasks:
-            self.task_listbox.insert(tk.END, f"{task.get_description()} (Start: {task.get_start_date()}, End: {task.get_end_date()})")
+            self.task_listbox.insert(_tk.END, f"{task.get_description()} (Start: {task.get_start_date()}, End: {task.get_end_date()})")
 
     def open_add_task_dialog(self):
-        self.add_task_dialog = tk.Toplevel(self.calendar_window)
+        self.add_task_dialog = _tk.Toplevel(self.calendar_window)
         self.add_task_dialog.title("Add Task")
         self.add_task_dialog.geometry("400x400")
 
@@ -83,6 +88,8 @@ class CalendarWindow:
             self.task_controller.add_task(task_description, current_user_id, start_date, end_date, repeat_value)
             self.add_task_dialog.destroy()
             self.show_tasks()  # Refresh tasks
+            self.app.load_tasks()
+
         else:
             messagebox.showwarning("Warning", "Task description cannot be empty")
 

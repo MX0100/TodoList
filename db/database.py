@@ -1,6 +1,6 @@
 # db/database.py
 import sqlite3
-
+from datetime import datetime
 
 class Database:
     def __init__(self, db_name="todo_app.db"):
@@ -50,16 +50,31 @@ class Database:
                 "INSERT INTO tasks (description, completed, user_id, start_date, end_date, repeat) VALUES (?, ?, ?, ?, ?, ?)",
                 (description, 0, user_id, start_date, end_date, repeat_value))
 
+    def update_task_with_description(self, task_id, description):
+        with self.connection:
+            self.connection.execute(
+                "UPDATE tasks set description = ? WHERE id = ?",
+                (description, task_id))
+
+
     def get_tasks(self, user_id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM tasks WHERE user_id = ? ORDER BY timestamp", (user_id,))
+        cursor.execute("SELECT * FROM tasks WHERE user_id = ? ORDER BY id", (user_id,))
         return cursor.fetchall()
 
     def get_general_tasks(self, user_id):
         cursor = self.connection.cursor()
         cursor.execute(
-            "SELECT * FROM tasks WHERE user_id = ? and start_date is null and tasks.end_date is null ORDER BY timestamp",
+            "SELECT * FROM tasks WHERE user_id = ? and start_date is null and tasks.end_date is null ORDER BY id",
             (user_id,))
+        return cursor.fetchall()
+
+    def get_scheduled_tasks(self, user_id):
+        cursor = self.connection.cursor()
+        today = datetime.today().strftime('%Y-%m-%d')
+        cursor.execute(
+            "SELECT * FROM tasks WHERE user_id = ? and (start_date is not null or tasks.end_date is not null) and (start_date >= ? or end_date <= ?) ORDER BY start_date",
+            (user_id, today, today))
         return cursor.fetchall()
 
     def get_tasks_by_date(self, user_id, date):
@@ -67,10 +82,19 @@ class Database:
         cursor.execute("""
             SELECT * FROM tasks 
             WHERE user_id = ? AND date(start_date) <= date(?) AND date(end_date) >= date(?)
-            ORDER BY timestamp
+            ORDER BY id
         """, (user_id, date, date))
         return cursor.fetchall()
 
     def delete_task(self, task_id):
         with self.connection:
             self.connection.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+
+
+
+    def toggle_task_completion(self, task_id, completed):
+        with self.connection:
+            self.connection.execute(
+                "UPDATE tasks set completed = ? WHERE id = ?",
+                (completed, task_id))
+
