@@ -15,10 +15,14 @@ class UserController:
         return self.user_manager.register_user(username, password)
 
     def login_user(self, username, password):
+        if not username or not password:
+            return False, "Username and password cannot be empty"
+
         self.current_user = self.user_manager.login_user(username, password)
         if self.current_user:
             return True, "Login successful"
-        return False, "Invalid username or password"
+        else:
+            return False, "Invalid username or password"
 
     def get_current_user(self):
         return self.current_user
