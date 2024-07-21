@@ -3,10 +3,10 @@ from tkinter import messagebox
 from controllers.user_controller import UserController
 
 class LoginRegisterWindow:
-    def __init__(self, root, to_do_app):
+    def __init__(self, root, to_do_app,user_controller):
         self.root = root
         self.to_do_app = to_do_app
-        self.user_controller = UserController()
+        self.user_controller = user_controller
 
         self.login_frame = tk.Frame(root)
         self.login_frame.pack(pady=10)

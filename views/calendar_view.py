@@ -2,21 +2,19 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from tkcalendar import Calendar, DateEntry
 from datetime import datetime
-from controllers.task_controller import TaskController
-from controllers.user_controller import UserController
-
+import datetime
 class CalendarWindow:
-    def __init__(self, root):
+    def __init__(self, root,user_controller,task_controller):
         self.root = root
-        self.task_controller = TaskController()
-        self.user_controller = UserController()
+        self.task_controller = task_controller
+        self.user_controller = user_controller
 
     def show_calendar(self):
         self.calendar_window = tk.Toplevel(self.root)
         self.calendar_window.title("Calendar")
         self.calendar_window.geometry("800x600")
 
-        self.calendar = Calendar(self.calendar_window, selectmode='day', year=datetime.now().year, month=datetime.now().month, day=datetime.now().day)
+        self.calendar = Calendar(self.calendar_window, selectmode='day', year=datetime.datetime.now().year, month=datetime.datetime.now().month, day=datetime.datetime.now().day)
         self.calendar.pack(pady=20, fill="both", expand=True)
 
         self.calendar.bind("<<CalendarSelected>>", self.show_tasks)
@@ -31,16 +29,18 @@ class CalendarWindow:
         close_btn.pack(pady=20)
 
         # 加载当天的任务
-        self.show_tasks(None)
+        self.show_tasks()
 
-    def show_tasks(self, event):
+    def show_tasks(self, event=None):
         selected_date = self.calendar.get_date()
-        current_user = self.user_controller.get_current_user()
-        tasks = self.task_controller.get_tasks_by_date(current_user, selected_date)
+        selected_date=datetime.datetime.strptime(selected_date, "%m/%d/%y").strftime("%Y-%m-%d") #转化
+        print(selected_date)
+        current_user_id = self.user_controller.get_current_user_id()
+        tasks = self.task_controller.get_tasks_by_date(current_user_id, selected_date)
 
         self.task_listbox.delete(0, tk.END)
         for task in tasks:
-            self.task_listbox.insert(tk.END, f"{task[1]} (Start: {task[3]}, End: {task[4]})")
+            self.task_listbox.insert(tk.END, f"{task.get_description()} (Start: {task.get_start_date()}, End: {task.get_end_date()})")
 
     def open_add_task_dialog(self):
         self.add_task_dialog = tk.Toplevel(self.calendar_window)
@@ -75,10 +75,14 @@ class CalendarWindow:
         end_date = self.end_date_entry.get_date()
         repeat = self.repeat_combobox.get()
 
+        # 将 repeat 字符值转换为整数值
+        repeat_value = {"None": 0, "Daily": 1, "Weekly": 2, "Monthly": 3, "Yearly": 4}.get(repeat, 0)
+
         if task_description:
-            current_user = self.user_controller.get_current_user()
-            self.task_controller.add_task(task_description, current_user, start_date, end_date, repeat)
+            current_user_id = self.user_controller.get_current_user_id()
+            self.task_controller.add_task(task_description, current_user_id, start_date, end_date, repeat_value)
             self.add_task_dialog.destroy()
-            self.show_tasks(None)  # Refresh tasks
+            self.show_tasks()  # Refresh tasks
         else:
             messagebox.showwarning("Warning", "Task description cannot be empty")
+

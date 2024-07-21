@@ -1,4 +1,6 @@
+# db/database.py
 import sqlite3
+
 
 class Database:
     def __init__(self, db_name="todo_app.db"):
@@ -21,7 +23,7 @@ class Database:
                     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                     start_date DATE,
                     end_date DATE,
-                    repeat TEXT,
+                    repeat INTEGER,  
                     completed BOOLEAN NOT NULL CHECK (completed IN (0, 1)),
                     user_id INTEGER,
                     FOREIGN KEY (user_id) REFERENCES users (id)
@@ -42,18 +44,22 @@ class Database:
         cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         return cursor.fetchone()
 
-    def add_task(self, description, user_id):
+    def add_task_with_dates(self, description, user_id, start_date, end_date, repeat_value):
         with self.connection:
-            self.connection.execute("INSERT INTO tasks (description, completed, user_id) VALUES (?, ?, ?)", (description, 0, user_id))
-
-    def add_task_with_dates(self, description, user_id, start_date, end_date, repeat):
-        with self.connection:
-            self.connection.execute("INSERT INTO tasks (description, completed, user_id, start_date, end_date, repeat) VALUES (?, ?, ?, ?, ?, ?)",
-                                    (description, 0, user_id, start_date, end_date, repeat))
+            self.connection.execute(
+                "INSERT INTO tasks (description, completed, user_id, start_date, end_date, repeat) VALUES (?, ?, ?, ?, ?, ?)",
+                (description, 0, user_id, start_date, end_date, repeat_value))
 
     def get_tasks(self, user_id):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM tasks WHERE user_id = ? ORDER BY timestamp", (user_id,))
+        return cursor.fetchall()
+
+    def get_general_tasks(self, user_id):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "SELECT * FROM tasks WHERE user_id = ? and start_date is null and tasks.end_date is null ORDER BY timestamp",
+            (user_id,))
         return cursor.fetchall()
 
     def get_tasks_by_date(self, user_id, date):
