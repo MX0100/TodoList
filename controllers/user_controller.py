@@ -2,10 +2,14 @@ from models.user_manager import UserManager
 
 
 class UserController:
-    def __init__(self):
-        self.user_manager=UserManager()
-        print(id(self.user_manager))
-        self.current_user=None
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(UserController, cls).__new__(cls, *args, **kwargs)
+            cls._instance.user_manager = UserManager()
+            cls._instance.current_user = None
+        return cls._instance
 
     def register_user(self, username, password):
         return self.user_manager.register_user(username, password)

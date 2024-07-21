@@ -5,14 +5,18 @@ from models.task import Task  # 确保 Task 类放在 models/task.py 文件中
 
 
 class TaskController:
-    def __init__(self):
-        self.db = Database()
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(TaskController, cls).__new__(cls, *args, **kwargs)
+            cls._instance.db = Database()
+        return cls._instance
 
     def add_task(self, description, user_id, start_date, end_date, repeat_value):
         self.db.add_task_with_dates(description, user_id, start_date, end_date, repeat_value)
 
     def get_tasks(self, user_id):
-        # print(db.get_tasks(user_id))
         tasks_data = self.db.get_tasks(user_id)
         tasks = [self._create_task_from_data(task) for task in tasks_data]
         return tasks
