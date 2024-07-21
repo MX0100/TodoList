@@ -6,6 +6,9 @@ Course Project
 
 ### 单例模式 (Singleton Pattern)
 确保一个类只有一个实例，并提供全局访问点。
+UserController.py
+TasksController.py
+UserManager.py
 
 **代码示例**:
 ```python
