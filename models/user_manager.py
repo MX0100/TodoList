@@ -28,7 +28,7 @@ class UserManager:
             self.current_user = {
                 "id": user[0],
                 "username": user[1],
-                "password": user[2]  # 如果需要，可以包括密码
+                "password": password  # 如果需要，可以包括密码
             }
             return self.current_user
 

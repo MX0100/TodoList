@@ -13,19 +13,19 @@ class TaskController:
             cls._instance.db = Database()
         return cls._instance
 
-    def add_task(self, description, user_id, start_date, end_date, repeat_value):
-        self.db.add_task_with_dates(description, user_id, start_date, end_date, repeat_value)
+    def add_task(self, description, user_id, start_date, end_date, repeat_value, password):
+        self.db.add_task_with_dates(description, user_id, start_date, end_date, repeat_value, password)
 
-    def update_task(self, task_id, new_description):
-        self.db.update_task_with_description(task_id, new_description)
+    def update_task(self, task_id, new_description, password):
+        self.db.update_task_with_description(task_id, new_description, password)
 
-    def get_tasks(self, user_id):
-        tasks_data = self.db.get_tasks(user_id)
+    def get_tasks(self, user_id, password):
+        tasks_data = self.db.get_tasks(user_id, password)
         tasks = [self._create_task_from_data(task) for task in tasks_data]
         return tasks
 
-    def get_tasks_by_date(self, user_id, date):
-        tasks_data = self.db.get_tasks_by_date(user_id, date)
+    def get_tasks_by_date(self, user_id, date, password):
+        tasks_data = self.db.get_tasks_by_date(user_id, date, password)
         filtered_tasks = []
         for task_data in tasks_data:
             task = self._create_task_from_data(task_data)
@@ -72,13 +72,13 @@ class TaskController:
             return start_date <= current_date <= end_date and start_date.month == current_date.month and start_date.day == current_date.day
         return False
 
-    def get_general_tasks(self, user_id):
-        tasks_data = self.db.get_general_tasks(user_id)
+    def get_general_tasks(self, user_id, password):
+        tasks_data = self.db.get_general_tasks(user_id, password)
         tasks = [self._create_task_from_data(task) for task in tasks_data]
         return tasks
 
-    def get_scheduled_tasks(self, user_id):
-        tasks_data = self.db.get_scheduled_tasks(user_id)
+    def get_scheduled_tasks(self, user_id, password):
+        tasks_data = self.db.get_scheduled_tasks(user_id, password)
         tasks = [self._create_task_from_data(task) for task in tasks_data]
         return tasks
 
@@ -87,3 +87,8 @@ class TaskController:
         self.db.toggle_task_completion(task_id, completed)
 
 
+    def register_observer(self, observer):
+        self.db.add_observer(observer)
+
+    def unregister_observer(self, observer):
+        self.db.remove_observer(observer)

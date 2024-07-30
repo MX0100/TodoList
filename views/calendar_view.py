@@ -41,7 +41,8 @@ class CalendarWindow:
             selected_date=datetime.datetime.strptime(selected_date, "%m/%d/%y").strftime("%Y-%m-%d") #转化
 
         current_user_id = self.user_controller.get_current_user_id()
-        tasks = self.task_controller.get_tasks_by_date(current_user_id, selected_date)
+        password = self.user_controller.get_current_user_password()
+        tasks = self.task_controller.get_tasks_by_date(current_user_id, selected_date, password)
 
         self.task_listbox.delete(0, _tk.END)
         for task in tasks:
@@ -85,10 +86,9 @@ class CalendarWindow:
 
         if task_description:
             current_user_id = self.user_controller.get_current_user_id()
-            self.task_controller.add_task(task_description, current_user_id, start_date, end_date, repeat_value)
+            self.task_controller.add_task(task_description, current_user_id, start_date, end_date, repeat_value, self.user_controller.get_current_user_password())
             self.add_task_dialog.destroy()
             self.show_tasks()  # Refresh tasks
-            self.app.load_tasks()
 
         else:
             messagebox.showwarning("Warning", "Task description cannot be empty")

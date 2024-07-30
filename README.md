@@ -1,6 +1,11 @@
-# TodoList
+# Secure TodoList
 
 Course Project
+
+
+## explain the problem
+Though commertial Todo List apps exist, we want something that's open-sourced, local and securely encrypted solution.
+
 
 ## 设计模式
 
@@ -55,6 +60,32 @@ self.add_task_btn = tk.Button(self.frame, text="Add Task", command=self.add_task
 # views/calendar_view.py
 self.calendar.bind("<<CalendarSelected>>", self.show_tasks)
 ```
+
+```python
+class Database:
+    self.observers = []
+
+    def add_observer(self, observer):
+        self.observers.append(observer)
+    def remove_observer(self, observer):
+        self.observers.remove(observer)
+    def notify_observers(self):
+        for observer in self.observers:
+            observer.update()
+
+class Observer(ABC):
+    @abstractmethod
+    def update(self):
+        pass
+
+class ToDoApp(Observer):
+    def __init__(self, root):
+        self.task_controller.db.add_observer(self)
+    def update(self):
+        self.reload_tasks()
+```
+
+
 ### 策略模式 (Strategy Pattern)
 定义一系列算法，将每个算法封装起来，使它们可以相互替换。
 

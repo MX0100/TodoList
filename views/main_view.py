@@ -1,6 +1,7 @@
 import tkinter as _tk
 from tkinter import ttk as tk
 from tkinter import messagebox
+from abc import ABC, abstractmethod
 from controllers.task_controller import TaskController
 from controllers.user_controller import UserController
 from views.login_register_view import LoginRegisterWindow
@@ -9,9 +10,14 @@ import sys
 
 OS = sys.platform
 
+class Observer(ABC):
+    @abstractmethod
+    def update(self):
+        pass
 
-class ToDoApp:
+class ToDoApp(Observer):
     def __init__(self, root):
+        super().__init__()
         self.root = root
         self.user_controller = UserController()
         self.task_controller = TaskController()
@@ -20,7 +26,12 @@ class ToDoApp:
         self.scheduled_tasks = []
         self.calendar_window = None
 
+        # Register self as an observer
+        self.task_controller.register_observer(self)
+
     def show_main_window(self):
+        self.root.geometry("750x500")
+
         from views.calendar_view import CalendarWindow  # 延迟导入以避免循环依赖
         self.calendar_window = CalendarWindow(self.root, self.user_controller, self.task_controller, self)
 
@@ -103,7 +114,7 @@ class ToDoApp:
             self.scheduled_tasks_canvas.bind('<Button-4>', self._on_mouse_wheel_scheduled)
             self.scheduled_tasks_canvas.bind('<Button-5>', self._on_mouse_wheel_scheduled)
 
-        self.load_tasks()
+        self.reload_tasks()
 
     def _on_mouse_wheel_general(self, event):
         self.general_tasks_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
@@ -112,20 +123,20 @@ class ToDoApp:
         self.scheduled_tasks_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     @auth_required
-    def add_task(self):
+    def add_task(self, event=None):
         task_description = self.task_entry.get()
         if task_description.strip():
             current_user_id = self.user_controller.get_current_user_id()
-            self.task_controller.add_task(task_description, current_user_id, None, None, 0)
+            self.task_controller.add_task(task_description, current_user_id, None, None, 0, self.user_controller.get_current_user_password())
             self.task_entry.delete(0, _tk.END)
-            self.load_tasks()
         else:
             messagebox.showwarning("Warning", "Task description cannot be empty")
 
-    def load_tasks(self):
+    def reload_tasks(self):
         current_user_id = self.user_controller.get_current_user_id()
-        self.tasks = self.task_controller.get_general_tasks(current_user_id)
-        self.scheduled_tasks = self.task_controller.get_scheduled_tasks(current_user_id)
+        password = self.user_controller.get_current_user_password()
+        self.tasks = self.task_controller.get_general_tasks(current_user_id, password)
+        self.scheduled_tasks = self.task_controller.get_scheduled_tasks(current_user_id, password)
         self.update_tasks()
 
     def update_tasks(self):
@@ -174,16 +185,25 @@ class ToDoApp:
             delete_btn.pack(side="right")
 
     def update_task(self, task_id, new_description):
-        self.task_controller.update_task(task_id, new_description)
-        self.load_tasks()
+        password = self.user_controller.get_current_user_password()
+        self.task_controller.update_task(task_id, new_description, password)
 
     def toggle_task_completion(self, task_id, completed):
         self.task_controller.toggle_task_completion(task_id, completed)
-        self.load_tasks()
 
     def delete_task(self, task_id):
         self.task_controller.delete_task(task_id)
-        self.load_tasks()
+
+    def update(self):
+        self.reload_tasks()
+
+    def __del__(self):
+        # Unregister observer when the app is closed
+        if hasattr(self, "task_controller"):
+            self.task_controller.unregister_observer(self)
+        s = super()
+        if hasattr(s, "__del__"): 
+            s.__del__(self)
 
 
 if __name__ == "__main__":
