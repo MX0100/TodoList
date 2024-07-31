@@ -5,21 +5,19 @@ Course Project
 ## 设计模式
 
 ### 单例模式 (Singleton Pattern)
-确保一个类只有一个实例，并提供全局访问点。
+The TaskController class is designed using the Singleton pattern, ensuring that only one instance of this class exists throughout the application. This is achieved by overriding the __new__ method to check if an instance already exists and, if not, creating it. The class is responsible for managing tasks, including adding, updating, retrieving, and deleting tasks from the database. It interacts with the Database class and uses methods to handle tasks based on user input, ensuring consistent task management across the application.
 
 **代码示例**:
 ```python
-# models/user_manager.py
-class UserManager:
+# class TaskController:
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super(UserManager, cls).__new__(cls)
-            cls._instance.users = {}
-            cls._instance.current_user = None
+            cls._instance = super(TaskController, cls).__new__(cls, *args, **kwargs)
             cls._instance.db = Database()
         return cls._instance
+
 ```
 
 ### 工厂模式 (Factory Pattern)
