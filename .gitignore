@@ -1,2 +1,5 @@
 *.pyc
 .venv
+*.pyc
+.DS_Store
+todo\ _app.db
