@@ -11,11 +11,31 @@ from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.exceptions import InvalidKey
 
 
+class RDBMSFactory:
+    def __init__(self):
+        pass
+
+    def make_database(self, provider_name, uri_or_path, env='production'):
+        provider_name = provider_name.lower()
+
+        if provider_name == "sqlite":
+            provider = sqlite3.connect(uri_or_path)
+        elif provider_name == "mysql":
+            pass
+        elif provider_name == "oracle":
+            pass
+        elif provider_name.strip() == "microsoftsqlserver":
+            pass
+        else:
+            raise Exception("DB provider not supported.")
+        return provider
+
 class Database:
-    def __init__(self, db_name="todo_app.db"):
-        self.connection = sqlite3.connect(db_name)
+    def __init__(self, uri_or_path="todo_app.db"):
+        db_provider = RDBMSFactory().make_database('sqlite', uri_or_path)
+        self.connection = db_provider
         self.create_tables()
-        self.observers = []
+        self.observers = set()
 
     def create_tables(self):
         with self.connection:
@@ -208,7 +228,7 @@ class Database:
         return decrypted.decode()
 
     def add_observer(self, observer):
-        self.observers.append(observer)
+        self.observers.add(observer)
 
     def remove_observer(self, observer):
         self.observers.remove(observer)

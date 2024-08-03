@@ -28,7 +28,7 @@ class UserController:
         return self.current_user
 
     def get_current_user_id(self):
-        return self.current_user['id']
+        return self.current_user.id
 
     def get_current_user_password(self):
-        return self.current_user['password']
+        return self.current_user.password

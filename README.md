@@ -57,9 +57,10 @@ It initializes an SQLite database, creates necessary tables for users and tasks,
 
 **代码示例**:
 ```python
-# class Database:
-    def __init__(self, db_name="todo_app.db"):
-        self.connection = sqlite3.connect(db_name)
+class Database:
+    def __init__(self, uri_or_path="todo_app.db"):
+        self.connection = sqlite3.connect(uri_or_path)
+
         self.create_tables()
         self.observers = []
 
