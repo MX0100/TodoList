@@ -137,13 +137,13 @@ class ToDoApp(Observer):
         password = self.user_controller.get_current_user_password()
         self.tasks = self.task_controller.get_general_tasks(current_user_id, password)
         self.scheduled_tasks = self.task_controller.get_scheduled_tasks(current_user_id, password)
-        self.update_tasks()
+        self._update_tasks()
 
-    def update_tasks(self):
-        self.update_general_tasks()
-        self.update_scheduled_tasks()
+    def _update_tasks(self):
+        self._update_general_tasks()
+        self._update_scheduled_tasks()
 
-    def update_general_tasks(self):
+    def _update_general_tasks(self):
         for widget in self.general_tasks_inner_frame.winfo_children():
             widget.destroy()
 
@@ -163,7 +163,7 @@ class ToDoApp(Observer):
             delete_btn = tk.Button(task_frame, text="Delete", command=lambda task_id=task.get_task_id(): self.delete_task(task_id))
             delete_btn.pack(side="right")
 
-    def update_scheduled_tasks(self):
+    def _update_scheduled_tasks(self):
         for widget in self.scheduled_tasks_inner_frame.winfo_children():
             widget.destroy()
 

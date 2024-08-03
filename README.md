@@ -40,8 +40,8 @@ class UserManager:
 ```python
 # db/database.py
 class Database:
-    def __init__(self, db_name="todo_app.db"):
-        self.connection = sqlite3.connect(db_name)
+    def __init__(self, uri_or_path="todo_app.db"):
+        self.connection = sqlite3.connect(uri_or_path)
         self.create_tables()
 ```
 ### 命令模式 (Command Pattern)

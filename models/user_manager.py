@@ -1,5 +1,5 @@
 from db.database import Database
-
+from .user import User
 
 class UserManager:
     _instance = None
@@ -25,16 +25,17 @@ class UserManager:
     def login_user(self, username, password):
         user = self.db.get_user(username, password)
         if user:
-            self.current_user = {
-                "id": user[0],
-                "username": user[1],
-                "password": password  # 如果需要，可以包括密码
-            }
+
+            self.current_user = User(
+                id=user[0],
+                username = user[1],
+                password = password
+            )
             return self.current_user
 
     def get_current_user_id(self):
         if self.current_user:
-            return self.current_user["id"]
+            return self.current_user.id
         return None
 
     def get_current_user(self):
