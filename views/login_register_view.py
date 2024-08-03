@@ -15,7 +15,7 @@ class LoginRegisterWindow:
 
         cover_path = os.sep.join([
             os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-            "resources/purple_book.png"
+            "resources/img.png"
         ])
 
         # Load the image
