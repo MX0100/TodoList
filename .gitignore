@@ -3,3 +3,9 @@
 *.pyc
 .DS_Store
 todo\ _app.db
+.idea/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
