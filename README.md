@@ -1,18 +1,13 @@
 # TodoList
 
-Course Project
+ENGI 9874 Course Project
 
-## Simplified Implementation
-In Python, you can directly define a base class that includes the necessary methods, and the concrete strategy classes only need to implement these methods. This implementation is more concise and can fully meet the requirements in many cases.
-## Dynamic Language Characteristics
-Python is a dynamic language and does not enforce the use of abstract base classes to define interfaces. You can use duck typing to implement interfaces, meaning that as long as a class implements the required methods, it can be considered as implementing the interface.
+## Design Patterns
 
-## 设计模式
-
-### 单例模式 (Singleton Pattern)
+### Singleton Pattern
 The TaskController class is designed using the Singleton pattern, ensuring that only one instance of this class exists throughout the application. This is achieved by overriding the __new__ method to check if an instance already exists and, if not, creating it. The class is responsible for managing tasks, including adding, updating, retrieving, and deleting tasks from the database. It interacts with the Database class and uses methods to handle tasks based on user input, ensuring consistent task management across the application.
 
-**代码示例**:
+**Code Example**:
 ```python
 # class TaskController:
     _instance = None
@@ -52,23 +47,24 @@ class UserManager:
 ```
 In Python, cls is a conventionally used parameter name in class methods that refer to the class itself. This is similar to how self refers to the instance of the class in instance methods. Here’s a brief explanation:
 
-### 工厂模式 (Factory Pattern)
+### Factory Pattern
 It initializes an SQLite database, creates necessary tables for users and tasks, and includes methods for adding, updating, retrieving, and deleting tasks and users. The class ensures security by using PBKDF2HMAC for password hashing and AES for encrypting task descriptions.
 
-**代码示例**:
+**Code Example**:
 ```python
-class Database:
-    def __init__(self, uri_or_path="todo_app.db"):
-        self.connection = sqlite3.connect(uri_or_path)
-
+# class Database:
+    def __init__(self, db_name="todo_app.db"):
+        self.connection = sqlite3.connect(db_name)
         self.create_tables()
         self.observers = []
 
     def create_tables(self):
         with self.connection:
 ```
-### 观察者模式 (Observer Pattern)
+### Observer Pattern
 db.py also implements the observer pattern to notify registered observers of any changes in the database, ensuring consistent task management and real-time updates across the application.
+
+**Code Example**:
 ```python
  def add_observer(self, observer):
         self.observers.append(observer)
@@ -92,41 +88,24 @@ class Observer(ABC):
 # views/calendar_view.py
 self.calendar.bind("<<CalendarSelected>>", self.show_tasks)
 ```
-### 策略模式 (Strategy Pattern)
-The Strategy Pattern is a behavioral design pattern that defines a family of algorithms, encapsulates each one, and makes them interchangeable. This pattern allows the algorithm to vary independently from its clients.
+### Strategy Pattern
+Defines a family of algorithms, encapsulates each one, and makes them interchangeable.
 
-定义一系列算法，将每个算法封装起来，使它们可以相互替换。
-
-**代码示例**:
+**Code Example**:
 ```python
 # models/user_manager.py
-class RegistrationStrategy:
-    def validate(self, db, username, password):
-        raise NotImplementedError("You should implement this method.")
-
-class EmptyFieldStrategy(RegistrationStrategy):
-    def validate(self, db, username, password):
-        if not username or not password:
-            return False, "Username and password cannot be empty"
-        return True, None
-
-class UsernameExistsStrategy(RegistrationStrategy):
-    def validate(self, db, username, password):
-        if db.get_user_by_username(username):
-            return False, "Username already exists"
-        return True, None
+def register_user(self, username, password):
+    if not username or not password:
+        return False, "Username and password cannot be empty"
+    if self.db.get_user_by_username(username):
+        return False, "Username already exists"
+    self.db.add_user(username, password)
+    return True, "User registered successfully"
 ```
-### 模板方法模式 (Template Method Pattern)
-1.	Abstract Class:
-    •	Contains the template method which defines the algorithm’s structure.
-	•	The template method consists of a series of method calls, some of which are implemented in the abstract class, and some are abstract (or hooks) meant to be implemented by subclasses.
-2.	Concrete Classes:
-	•	Implement the abstract methods (or hooks) defined in the abstract class.
-	•	These implementations provide the specific behavior for the steps defined as abstract in the template method.
+### Template Method Pattern
+Defines the skeleton of an algorithm in an operation, deferring some steps to subclasses.
 
-定义一个操作中的算法骨架，将一些步骤延迟到子类中。
-
-**代码示例**:
+**Code Example**:
 ```python
 # db/database.py
 def create_tables(self):
@@ -152,7 +131,7 @@ def create_tables(self):
             )
         """)
 ```
-### 装饰器模式 (Decorator Pattern)
+### Decorator Pattern
 The auth_required decorator is designed to ensure that a user is authenticated before allowing access to certain methods. Here’s how it works:
 
     Decorator Definition: The auth_required function is defined as a decorator. It takes a function func as an argument.
@@ -182,25 +161,10 @@ def auth_required(func):
 
     return wrapper
 ```
-### MVC 模式 (Model-View-Controller Pattern)
-1.	Model:
-•	Represents the application’s data and business logic.
-•	Notifies observers (typically the controller or view) of changes.
-•	Directly manages the data, logic, and rules of the application.
-2.	View:
-•	Represents the UI (user interface) of the application.
-•	Displays the data from the model to the user.
-•	Sends user commands to the controller.
-•	Observes the model and updates the display when the model changes.
-3.	Controller:
-•	Acts as an intermediary between Model and View.
-•	Responds to user input from the View.
-•	Updates the Model based on user actions.
-•	May also update the View in response to model changes.
+### Model-View-Controller Pattern
+The Model-View-Controller pattern separates an application into three main parts: Model, View, and Controller.
 
-模型-视图-控制器模式将应用程序分为三个主要部分：模型、视图和控制器。
-
-**代码示例**:
+**Code Example**:
 ```python
 # controllers/task_controller_interface.py
 from abc import ABC, abstractmethod
