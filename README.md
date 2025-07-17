@@ -1,6 +1,6 @@
 # TodoList
 
-Course Project
+ENGI 9874 Course Project
 
 ## Design Patterns
 
