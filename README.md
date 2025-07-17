@@ -2,12 +2,12 @@
 
 Course Project
 
-## 设计模式
+## Design Patterns
 
-### 单例模式 (Singleton Pattern)
+### Singleton Pattern
 The TaskController class is designed using the Singleton pattern, ensuring that only one instance of this class exists throughout the application. This is achieved by overriding the __new__ method to check if an instance already exists and, if not, creating it. The class is responsible for managing tasks, including adding, updating, retrieving, and deleting tasks from the database. It interacts with the Database class and uses methods to handle tasks based on user input, ensuring consistent task management across the application.
 
-**代码示例**:
+**Code Example**:
 ```python
 # class TaskController:
     _instance = None
@@ -47,10 +47,10 @@ class UserManager:
 ```
 In Python, cls is a conventionally used parameter name in class methods that refer to the class itself. This is similar to how self refers to the instance of the class in instance methods. Here’s a brief explanation:
 
-### 工厂模式 (Factory Pattern)
+### Factory Pattern
 It initializes an SQLite database, creates necessary tables for users and tasks, and includes methods for adding, updating, retrieving, and deleting tasks and users. The class ensures security by using PBKDF2HMAC for password hashing and AES for encrypting task descriptions.
 
-**代码示例**:
+**Code Example**:
 ```python
 # class Database:
     def __init__(self, db_name="todo_app.db"):
@@ -61,8 +61,10 @@ It initializes an SQLite database, creates necessary tables for users and tasks,
     def create_tables(self):
         with self.connection:
 ```
-### 观察者模式 (Observer Pattern)
+### Observer Pattern
 db.py also implements the observer pattern to notify registered observers of any changes in the database, ensuring consistent task management and real-time updates across the application.
+
+**Code Example**:
 ```python
  def add_observer(self, observer):
         self.observers.append(observer)
@@ -86,10 +88,10 @@ class Observer(ABC):
 # views/calendar_view.py
 self.calendar.bind("<<CalendarSelected>>", self.show_tasks)
 ```
-### 策略模式 (Strategy Pattern)
-定义一系列算法，将每个算法封装起来，使它们可以相互替换。
+### Strategy Pattern
+Defines a family of algorithms, encapsulates each one, and makes them interchangeable.
 
-**代码示例**:
+**Code Example**:
 ```python
 # models/user_manager.py
 def register_user(self, username, password):
@@ -100,10 +102,10 @@ def register_user(self, username, password):
     self.db.add_user(username, password)
     return True, "User registered successfully"
 ```
-### 模板方法模式 (Template Method Pattern)
-定义一个操作中的算法骨架，将一些步骤延迟到子类中。
+### Template Method Pattern
+Defines the skeleton of an algorithm in an operation, deferring some steps to subclasses.
 
-**代码示例**:
+**Code Example**:
 ```python
 # db/database.py
 def create_tables(self):
@@ -129,7 +131,7 @@ def create_tables(self):
             )
         """)
 ```
-### 装饰器模式 (Decorator Pattern)
+### Decorator Pattern
 The auth_required decorator is designed to ensure that a user is authenticated before allowing access to certain methods. Here’s how it works:
 
     Decorator Definition: The auth_required function is defined as a decorator. It takes a function func as an argument.
@@ -159,10 +161,10 @@ def auth_required(func):
 
     return wrapper
 ```
-### MVC 模式 (Model-View-Controller Pattern)
-模型-视图-控制器模式将应用程序分为三个主要部分：模型、视图和控制器。
+### Model-View-Controller Pattern
+The Model-View-Controller pattern separates an application into three main parts: Model, View, and Controller.
 
-**代码示例**:
+**Code Example**:
 ```python
 # controllers/task_controller_interface.py
 from abc import ABC, abstractmethod
